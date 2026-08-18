@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel
 
-from app.orchestrator import Orchestrator
+from app.orchestrator import PIPELINE, Orchestrator
 from app.session.models import SessionState
 from app.stages.base import StageDefinition
 
@@ -81,3 +81,16 @@ def test_current_stage_name_returns_expected_stage():
     session.stage_index = 1
 
     assert orchestrator.current_stage_name(session) == "stage_b"
+
+
+def test_pipeline_has_expected_stage_order():
+    assert [stage.name for stage in PIPELINE] == [
+        "target_segment",
+        "market_research",
+        "value_proposition",
+        "hypothesis",
+        "hypothesis_validation",
+        "mvp_mlp",
+        "business_model",
+        "final_verdict",
+    ]

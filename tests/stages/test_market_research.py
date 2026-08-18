@@ -4,10 +4,12 @@ from pydantic import ValidationError
 from app.stages.market_research import MarketResearchOutput, MarketResearchStage
 
 
-def test_build_prompt_includes_idea():
+def test_build_prompt_includes_prior_target_segment():
     stage = MarketResearchStage()
-    prompt = stage.build_prompt(idea="반려동물 산책 매칭 앱", prior_outputs={})
+    prior = {"target_segment": {"primary_segment": "1인 가구 반려인"}}
+    prompt = stage.build_prompt(idea="반려동물 산책 매칭 앱", prior_outputs=prior)
     assert "반려동물 산책 매칭 앱" in prompt
+    assert "1인 가구 반려인" in prompt
     assert "source_tier" in prompt
 
 

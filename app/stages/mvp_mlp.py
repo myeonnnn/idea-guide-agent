@@ -39,5 +39,5 @@ class MvpMlpStage(StageDefinition[MvpMlpOutput]):
 }}
 
 규칙:
-- mvp_scope는 가설 검증에 필요한 최소한의 기능만 포함하세요.
+- mvp_scope는 이전 단계에서 지목한 riskiest_assumption(가장 위험한 가정)을 검증하는 데 필요한 최소한의 기능만 포함하세요.
 - success_metrics는 측정 가능한 형태로 작성하세요."""

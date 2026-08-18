@@ -16,7 +16,7 @@ function App() {
   const [stageIndex, setStageIndex] = useState(0);
   const [complete, setComplete] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<MessageResponseOk | null>(null);
+  const [results, setResults] = useState<MessageResponseOk[]>([]);
   const [warning, setWarning] = useState<Warning | null>(null);
 
   const runStage = async (id: string, message: string) => {
@@ -27,7 +27,7 @@ function App() {
         setWarning({ message: res.warning, rawText: res.raw_text });
       } else {
         setWarning(null);
-        setResult(res);
+        setResults((prev) => [...prev, res]);
         setStageIndex(res.stage_index);
         setComplete(res.complete);
       }
@@ -72,7 +72,7 @@ function App() {
       stageIndex={stageIndex}
       complete={complete}
       loading={loading}
-      result={result}
+      results={results}
       warning={warning}
       onAdvance={handleAdvance}
     />

@@ -1,5 +1,3 @@
-import json
-
 from pydantic import BaseModel, model_validator
 
 from app.stages.base import StageDefinition
@@ -26,14 +24,11 @@ class TargetSegmentStage(StageDefinition[TargetSegmentOutput]):
     output_model = TargetSegmentOutput
 
     def build_prompt(self, idea: str, prior_outputs: dict[str, dict], user_message: str = "") -> str:
-        market_research = prior_outputs.get("market_research", {})
         extra = f"\n\n사용자 추가 입력: {user_message}" if user_message.strip() else ""
-        return f"""당신은 스타트업의 타겟 고객층을 분석하는 전략 컨설턴트입니다.
+        return f"""당신은 스타트업의 타겟 고객층을 분석하는 전략 컨설턴트입니다. 시장 통계보다
+먼저 "누가 어떤 문제를 겪고 있는가"를 명확히 하는 것이 목적입니다.
 
 아이디어: {idea}
-
-이전 단계(시장조사) 결과:
-{json.dumps(market_research, ensure_ascii=False, indent=2)}
 {extra}
 
 다음 JSON 스키마와 정확히 일치하는 JSON 객체 하나만 응답하세요. 다른 설명 텍스트는 포함하지 마세요.

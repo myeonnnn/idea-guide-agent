@@ -1,5 +1,6 @@
 import type {
   BusinessModelOutput,
+  FinalVerdictOutput,
   HypothesisOutput,
   HypothesisValidationOutput,
   MarketResearchOutput,
@@ -7,6 +8,7 @@ import type {
   StageName,
   StageOutputMap,
   TargetSegmentOutput,
+  ValuePropositionOutput,
 } from "../types";
 import { BulletList, ClaimList, Eyebrow, TagList } from "./Primitives";
 import "./StageOutputView.css";
@@ -23,6 +25,25 @@ const CONFIDENCE_LABELS = {
   high: "높음",
 };
 
+const VERDICT_META = {
+  proceed: { label: "진행", className: "verdict-proceed" },
+  pivot: { label: "피벗 필요", className: "verdict-pivot" },
+  kill: { label: "보류", className: "verdict-kill" },
+};
+
+function TargetSegmentView({ output }: { output: TargetSegmentOutput }) {
+  return (
+    <>
+      <h3 className="stage-highlight">{output.primary_segment}</h3>
+      <p className="stage-summary">{output.segment_description}</p>
+      <Eyebrow>페인포인트</Eyebrow>
+      <BulletList items={output.pain_points} />
+      <Eyebrow>근거</Eyebrow>
+      <ClaimList claims={output.claims} />
+    </>
+  );
+}
+
 function MarketResearchView({ output }: { output: MarketResearchOutput }) {
   return (
     <>
@@ -35,13 +56,14 @@ function MarketResearchView({ output }: { output: MarketResearchOutput }) {
   );
 }
 
-function TargetSegmentView({ output }: { output: TargetSegmentOutput }) {
+function ValuePropositionView({ output }: { output: ValuePropositionOutput }) {
   return (
     <>
-      <h3 className="stage-highlight">{output.primary_segment}</h3>
-      <p className="stage-summary">{output.segment_description}</p>
-      <Eyebrow>페인포인트</Eyebrow>
-      <BulletList items={output.pain_points} />
+      <p className="stage-summary">{output.statement}</p>
+      <Eyebrow>차별화 포인트</Eyebrow>
+      <BulletList items={output.differentiators} />
+      <Eyebrow>진입장벽</Eyebrow>
+      <p className="stage-summary">{output.unfair_advantage}</p>
       <Eyebrow>근거</Eyebrow>
       <ClaimList claims={output.claims} />
     </>
@@ -67,23 +89,34 @@ function HypothesisView({ output }: { output: HypothesisOutput }) {
 }
 
 function HypothesisValidationView({ output }: { output: HypothesisValidationOutput }) {
+  const sorted = [...output.validations].sort((a, b) => a.risk_rank - b.risk_rank);
   return (
-    <ul className="hypothesis-list">
-      {output.validations.map((v) => (
-        <li key={v.hypothesis_statement} className="hypothesis-card">
-          <span className={`confidence-tag confidence-${v.confidence}`}>
-            확신도: {CONFIDENCE_LABELS[v.confidence]}
-          </span>
-          <p className="hypothesis-card__statement">{v.hypothesis_statement}</p>
-          <p className="hypothesis-card__method">
-            <span className="mono-label">검증 계획</span> {v.validation_plan}
-          </p>
-          <p className="hypothesis-card__method">
-            <span className="mono-label">필요 증거</span> {v.required_evidence}
-          </p>
-        </li>
-      ))}
-    </ul>
+    <>
+      <div className="risk-callout">
+        <p className="risk-callout__label">가장 먼저 검증해야 할 가정</p>
+        <p className="risk-callout__statement">{output.riskiest_assumption}</p>
+        <p className="risk-callout__reasoning">{output.riskiest_assumption_reasoning}</p>
+      </div>
+      <ul className="hypothesis-list">
+        {sorted.map((v) => (
+          <li key={v.hypothesis_statement} className="hypothesis-card">
+            <div className="hypothesis-card__tags">
+              <span className="risk-rank-tag">위험도 {v.risk_rank}순위</span>
+              <span className={`confidence-tag confidence-${v.confidence}`}>
+                확신도: {CONFIDENCE_LABELS[v.confidence]}
+              </span>
+            </div>
+            <p className="hypothesis-card__statement">{v.hypothesis_statement}</p>
+            <p className="hypothesis-card__method">
+              <span className="mono-label">검증 계획</span> {v.validation_plan}
+            </p>
+            <p className="hypothesis-card__method">
+              <span className="mono-label">필요 증거</span> {v.required_evidence}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
 
@@ -114,6 +147,20 @@ function BusinessModelView({ output }: { output: BusinessModelOutput }) {
   );
 }
 
+function FinalVerdictView({ output }: { output: FinalVerdictOutput }) {
+  const meta = VERDICT_META[output.verdict];
+  return (
+    <>
+      <span className={`verdict-badge ${meta.className}`}>{meta.label}</span>
+      <p className="stage-summary">{output.reasoning}</p>
+      <Eyebrow>아직 검증되지 않은 핵심 가정</Eyebrow>
+      <BulletList items={output.key_unvalidated_assumptions} />
+      <Eyebrow>근거 품질 요약</Eyebrow>
+      <p className="stage-summary">{output.evidence_quality_summary}</p>
+    </>
+  );
+}
+
 interface StageOutputViewProps {
   stageName: StageName;
   output: StageOutputMap[StageName];
@@ -121,10 +168,12 @@ interface StageOutputViewProps {
 
 export function StageOutputView({ stageName, output }: StageOutputViewProps) {
   switch (stageName) {
-    case "market_research":
-      return <MarketResearchView output={output as MarketResearchOutput} />;
     case "target_segment":
       return <TargetSegmentView output={output as TargetSegmentOutput} />;
+    case "market_research":
+      return <MarketResearchView output={output as MarketResearchOutput} />;
+    case "value_proposition":
+      return <ValuePropositionView output={output as ValuePropositionOutput} />;
     case "hypothesis":
       return <HypothesisView output={output as HypothesisOutput} />;
     case "hypothesis_validation":
@@ -133,5 +182,7 @@ export function StageOutputView({ stageName, output }: StageOutputViewProps) {
       return <MvpMlpView output={output as MvpMlpOutput} />;
     case "business_model":
       return <BusinessModelView output={output as BusinessModelOutput} />;
+    case "final_verdict":
+      return <FinalVerdictView output={output as FinalVerdictOutput} />;
   }
 }

@@ -9,12 +9,25 @@
 
 .stepper__item {
   flex: 1;
+  position: relative;
+  padding-top: 0;
+}
+
+.stepper__button {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
-  position: relative;
-  padding-top: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+}
+
+button.stepper__button {
+  cursor: pointer;
 }
 
 .stepper__item::before {

@@ -26,8 +26,9 @@ export function IdeaIntake({ onSubmit, disabled }: IdeaIntakeProps) {
         먼저 검증하세요.
       </h1>
       <p className="intake__subhead">
-        시장조사부터 비즈니스모델 가정까지 6단계 프로토콜로 아이디어를 검토합니다. 모든 주장에는
-        출처 등급이 붙습니다 — 확인되지 않은 정보는 추정치로 명확히 표시됩니다.
+        타겟층 설정부터 종합 판단까지 8단계 프로토콜로 아이디어를 검토합니다. 모든 주장에는
+        출처 등급이 붙고, 가장 위험한 가정을 가려내며, 마지막엔 진행/피벗/보류를 냉정하게
+        판단합니다.
       </p>
 
       <form className="intake__form" onSubmit={handleSubmit}>

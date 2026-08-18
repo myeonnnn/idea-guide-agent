@@ -28,8 +28,9 @@ class HypothesisStage(StageDefinition[HypothesisOutput]):
 
     def build_prompt(self, idea: str, prior_outputs: dict[str, dict], user_message: str = "") -> str:
         context = {
-            "market_research": prior_outputs.get("market_research", {}),
             "target_segment": prior_outputs.get("target_segment", {}),
+            "market_research": prior_outputs.get("market_research", {}),
+            "value_proposition": prior_outputs.get("value_proposition", {}),
         }
         extra = f"\n\n사용자 추가 입력: {user_message}" if user_message.strip() else ""
         return f"""당신은 린 캔버스 방식으로 검증 가능한 가설을 세우는 전문가입니다.
