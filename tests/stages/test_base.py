@@ -68,3 +68,11 @@ def test_run_stage_strips_code_fence_without_language_tag():
     engine = FakeEngine(['```\n{"value": "ok"}\n```'])
     result = run_stage(engine, DummyStage(), idea="x", prior_outputs={})
     assert result.output == DummyOutput(value="ok")
+
+
+def test_run_stage_extracts_fenced_json_with_surrounding_prose():
+    engine = FakeEngine(
+        ['```json\n{"value": "ok"}\n```\n\n**참고**: 이 항목은 추정치입니다.']
+    )
+    result = run_stage(engine, DummyStage(), idea="x", prior_outputs={})
+    assert result.output == DummyOutput(value="ok")

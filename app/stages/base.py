@@ -9,11 +9,11 @@ from app.engine.base import Engine
 
 T = TypeVar("T", bound=BaseModel)
 
-_CODE_FENCE_RE = re.compile(r"^```(?:json)?\s*\n(.*)\n```\s*$", re.DOTALL)
+_CODE_FENCE_RE = re.compile(r"```(?:json)?\s*\n(.*?)\n```", re.DOTALL)
 
 
 def _strip_code_fence(text: str) -> str:
-    match = _CODE_FENCE_RE.match(text.strip())
+    match = _CODE_FENCE_RE.search(text)
     return match.group(1) if match else text
 
 
