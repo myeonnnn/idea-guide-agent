@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.engine.claude_cli import ClaudeCodeCLIEngine
@@ -65,3 +66,7 @@ def get_session(session_id: str):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="session not found")
     return session.model_dump(mode="json")
+
+
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

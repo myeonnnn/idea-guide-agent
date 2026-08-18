@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>아이디어 검증 에이전트</title>
+</head>
+<body>
+  <div id="app">
+    <h1>아이디어 검증 에이전트</h1>
+    <div id="idea-form">
+      <textarea id="idea-input" placeholder="아이디어를 입력하세요" rows="4" cols="50"></textarea>
+      <br />
+      <button id="start-btn">시작</button>
+    </div>
+    <div id="pipeline" style="display:none">
+      <h2 id="stage-name"></h2>
+      <pre id="stage-output"></pre>
+      <div id="warning" style="color:red; white-space: pre-wrap;"></div>
+      <input id="message-input" placeholder="추가 입력 (선택)" size="50" />
+      <button id="advance-btn">다음 단계</button>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
