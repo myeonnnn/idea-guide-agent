@@ -54,3 +54,17 @@ def test_run_stage_falls_back_on_schema_validation_failure():
     result = run_stage(engine, DummyStage(), idea="x", prior_outputs={})
     assert result.output is None
     assert result.warning is not None
+
+
+def test_run_stage_strips_markdown_code_fence_before_parsing():
+    engine = FakeEngine(['```json\n{"value": "ok"}\n```'])
+    result = run_stage(engine, DummyStage(), idea="x", prior_outputs={})
+    assert result.output == DummyOutput(value="ok")
+    assert result.warning is None
+    assert len(engine.calls) == 1
+
+
+def test_run_stage_strips_code_fence_without_language_tag():
+    engine = FakeEngine(['```\n{"value": "ok"}\n```'])
+    result = run_stage(engine, DummyStage(), idea="x", prior_outputs={})
+    assert result.output == DummyOutput(value="ok")

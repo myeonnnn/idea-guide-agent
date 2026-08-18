@@ -1,4 +1,5 @@
 import json
+import re
 from dataclasses import dataclass
 from typing import Generic, Type, TypeVar
 
@@ -7,6 +8,13 @@ from pydantic import BaseModel, ValidationError
 from app.engine.base import Engine
 
 T = TypeVar("T", bound=BaseModel)
+
+_CODE_FENCE_RE = re.compile(r"^```(?:json)?\s*\n(.*)\n```\s*$", re.DOTALL)
+
+
+def _strip_code_fence(text: str) -> str:
+    match = _CODE_FENCE_RE.match(text.strip())
+    return match.group(1) if match else text
 
 
 @dataclass
@@ -26,7 +34,7 @@ class StageDefinition(Generic[T]):
 
 def _parse_and_validate(stage: StageDefinition[T], text: str) -> tuple[T | None, str | None]:
     try:
-        data = json.loads(text)
+        data = json.loads(_strip_code_fence(text))
     except json.JSONDecodeError as exc:
         return None, f"JSON 파싱 실패: {exc}"
     try:
