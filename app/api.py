@@ -68,5 +68,5 @@ def get_session(session_id: str):
     return session.model_dump(mode="json")
 
 
-FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
-app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+FRONTEND_DIST_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+app.mount("/", StaticFiles(directory=FRONTEND_DIST_DIR, html=True), name="frontend")

@@ -23,7 +23,7 @@
 
 - 로컬 전용(127.0.0.1), 외부 API 키 없이 로컬 `claude` CLI(Claude Code)를 추론 엔진으로 사용
 - 백엔드: Python/FastAPI. 파이프라인 오케스트레이션과 자가검증 로직은 코드로 구현(스킬/프롬프트 지시문에만 의존하지 않음)
-- 프론트엔드: 빌드 스텝 없는 순수 HTML/JS
+- 프론트엔드: Vite + React + TypeScript (`frontend/`). 개발 시 Vite dev server가 `/session*` 요청을 FastAPI로 프록시하고, 배포 시에는 `npm run build` 결과물(`frontend/dist`)을 FastAPI가 정적 파일로 서빙한다
 - 추론 엔진은 `Engine` 인터페이스로 추상화되어 있어, 나중에 Anthropic/OpenAI API로 교체해도 파이프라인 코드는 변경하지 않는다
 
 ## 문서
@@ -32,6 +32,22 @@
 - MVP 아키텍처 설계: [`docs/superpowers/specs/2026-08-18-idea-validation-agent-mvp-design.md`](docs/superpowers/specs/2026-08-18-idea-validation-agent-mvp-design.md)
 - MVP 구현 플랜: [`docs/superpowers/plans/2026-08-18-idea-validation-agent-mvp.md`](docs/superpowers/plans/2026-08-18-idea-validation-agent-mvp.md)
 
+## 로컬 실행
+
+```bash
+# 백엔드
+python3.11 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+
+# 프론트엔드 빌드 (최초 1회, 또는 프론트엔드 수정 후)
+cd frontend && npm install && npm run build && cd ..
+
+# 서버 실행 (http://127.0.0.1:8000)
+.venv/bin/uvicorn app.api:app --host 127.0.0.1 --port 8000
+```
+
+프론트엔드를 개발 중일 때는 `cd frontend && npm run dev`로 별도 실행하면 (포트 5173) `/session*` 요청이 자동으로 8000번 백엔드로 프록시된다.
+
 ## 현재 상태
 
-설계 완료, 구현 진행 중 (MVP 구현 플랜 기준).
+MVP 구현 완료 (백엔드 6단계 파이프라인 + Vite/React 프론트엔드). 실제 `claude` CLI로 전체 파이프라인 E2E 검증 완료.

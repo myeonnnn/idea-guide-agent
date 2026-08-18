@@ -1,25 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <title>아이디어 검증 에이전트</title>
-</head>
-<body>
-  <div id="app">
-    <h1>아이디어 검증 에이전트</h1>
-    <div id="idea-form">
-      <textarea id="idea-input" placeholder="아이디어를 입력하세요" rows="4" cols="50"></textarea>
-      <br />
-      <button id="start-btn">시작</button>
-    </div>
-    <div id="pipeline" style="display:none">
-      <h2 id="stage-name"></h2>
-      <pre id="stage-output"></pre>
-      <div id="warning" style="color:red; white-space: pre-wrap;"></div>
-      <input id="message-input" placeholder="추가 입력 (선택)" size="50" />
-      <button id="advance-btn">다음 단계</button>
-    </div>
-  </div>
-  <script src="app.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dossier — 아이디어 검증 에이전트</title>
+    <meta
+      name="description"
+      content="아이디어를 시장조사부터 비즈니스모델 가정까지 6단계로 검증하고, 모든 주장에 출처 등급을 매기는 자가검증 에이전트"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Gothic+A1:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

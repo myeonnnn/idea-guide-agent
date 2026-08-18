@@ -1,0 +1,41 @@
+.evidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+a.evidence-badge {
+  cursor: pointer;
+}
+
+a.evidence-badge:hover {
+  filter: brightness(0.96);
+}
+
+.evidence-badge__mark {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.evidence-badge.tier-primary {
+  background: var(--tier-primary-bg);
+  color: var(--tier-primary);
+}
+
+.evidence-badge.tier-secondary {
+  background: var(--tier-secondary-bg);
+  color: var(--tier-secondary);
+}
+
+.evidence-badge.tier-estimate {
+  background: var(--tier-estimate-bg);
+  color: var(--tier-estimate);
+}
