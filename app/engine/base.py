@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Protocol, TypedDict
+from typing import Literal, Protocol, TypedDict
 
 
 class Message(TypedDict):
@@ -20,7 +20,7 @@ class EngineTimeoutError(EngineError):
 
 
 class EngineProcessError(EngineError):
-    def __init__(self, message: str, stderr: str = "", returncode: Optional[int] = None):
+    def __init__(self, message: str, stderr: str = "", returncode: int | None = None):
         super().__init__(message)
         self.stderr = stderr
         self.returncode = returncode
