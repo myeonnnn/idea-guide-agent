@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from app.engine.base import EngineError
 from app.engine.claude_cli import ClaudeCodeCLIEngine
 from app.orchestrator import PIPELINE, Orchestrator
 from app.session.store import SessionStore
@@ -39,7 +40,15 @@ def send_message(session_id: str, req: MessageRequest):
         raise HTTPException(status_code=400, detail="pipeline already complete")
 
     stage_name = orchestrator.current_stage_name(session)
-    result = orchestrator.advance(session, engine, user_message=req.message)
+    try:
+        result = orchestrator.advance(session, engine, user_message=req.message)
+    except EngineError as exc:
+        return {
+            "status": "warning",
+            "warning": str(exc),
+            "raw_text": getattr(exc, "raw_output", "") or getattr(exc, "stderr", ""),
+            "stage_index": session.stage_index,
+        }
 
     if result.output is None:
         return {

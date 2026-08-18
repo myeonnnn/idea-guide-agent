@@ -4,12 +4,14 @@ import pytest
 from fastapi.testclient import TestClient
 
 import app.api as api_module
+from app.engine.base import EngineTimeoutError
 
-VALID_MARKET_RESEARCH_JSON = json.dumps(
+VALID_TARGET_SEGMENT_JSON = json.dumps(
     {
-        "summary": "요약",
-        "market_size_claims": [{"text": "추정", "source_tier": "ESTIMATE", "source_url": None}],
-        "key_competitors": ["A", "B"],
+        "primary_segment": "1인 가구",
+        "segment_description": "설명",
+        "pain_points": ["시간 부족"],
+        "claims": [{"text": "추정", "source_tier": "ESTIMATE", "source_url": None}],
     }
 )
 
@@ -40,7 +42,7 @@ def test_create_session_returns_id(client):
 
 
 def test_message_advances_stage_on_valid_response(client, monkeypatch):
-    monkeypatch.setattr(api_module, "engine", FakeEngine([VALID_MARKET_RESEARCH_JSON]))
+    monkeypatch.setattr(api_module, "engine", FakeEngine([VALID_TARGET_SEGMENT_JSON]))
     session_id = client.post("/session", json={"idea": "아이디어"}).json()["session_id"]
 
     response = client.post(f"/session/{session_id}/message", json={"message": ""})
@@ -48,7 +50,7 @@ def test_message_advances_stage_on_valid_response(client, monkeypatch):
     assert response.status_code == 200
     body = response.json()
     assert body["status"] == "ok"
-    assert body["stage_name"] == "market_research"
+    assert body["stage_name"] == "target_segment"
     assert body["stage_index"] == 1
     assert body["complete"] is False
 
@@ -63,6 +65,23 @@ def test_message_returns_warning_on_invalid_response(client, monkeypatch):
     body = response.json()
     assert body["status"] == "warning"
     assert body["warning"] is not None
+
+
+def test_message_returns_warning_when_engine_raises(client, monkeypatch):
+    class TimingOutEngine:
+        def generate(self, prompt, history):
+            raise EngineTimeoutError("claude CLI timed out after 120s")
+
+    monkeypatch.setattr(api_module, "engine", TimingOutEngine())
+    session_id = client.post("/session", json={"idea": "아이디어"}).json()["session_id"]
+
+    response = client.post(f"/session/{session_id}/message", json={"message": ""})
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["status"] == "warning"
+    assert "timed out" in body["warning"]
+    assert body["stage_index"] == 0
 
 
 def test_message_for_unknown_session_returns_404(client):

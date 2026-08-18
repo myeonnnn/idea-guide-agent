@@ -11,7 +11,7 @@ from app.engine.base import (
 
 
 class ClaudeCodeCLIEngine:
-    def __init__(self, timeout_seconds: int = 120, claude_bin: str = "claude"):
+    def __init__(self, timeout_seconds: int = 240, claude_bin: str = "claude"):
         self.timeout_seconds = timeout_seconds
         self.claude_bin = claude_bin
 
