@@ -75,7 +75,7 @@
 .sidebar__item--done .sidebar__marker {
   background: var(--primary);
   border-color: var(--primary);
-  color: white;
+  color: var(--ink-on-accent);
 }
 
 .sidebar__item--current .sidebar__marker {

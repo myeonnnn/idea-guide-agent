@@ -19,17 +19,24 @@ function App() {
   const [results, setResults] = useState<MessageResponseOk[]>([]);
   const [warning, setWarning] = useState<Warning | null>(null);
 
-  const runStage = async (id: string, message: string) => {
+  // Auto-advances through the whole pipeline: after each stage succeeds it
+  // immediately calls itself for the next one, so the user only interacts
+  // once (submitting the idea). It only stops on completion or a warning
+  // (which surfaces a retry button rather than looping forever on an error).
+  const runStage = async (id: string): Promise<void> => {
     setLoading(true);
     try {
-      const res = await sendMessage(id, message);
+      const res = await sendMessage(id, "");
       if (res.status === "warning") {
         setWarning({ message: res.warning, rawText: res.raw_text });
-      } else {
-        setWarning(null);
-        setResults((prev) => [...prev, res]);
-        setStageIndex(res.stage_index);
-        setComplete(res.complete);
+        return;
+      }
+      setWarning(null);
+      setResults((prev) => [...prev, res]);
+      setStageIndex(res.stage_index);
+      setComplete(res.complete);
+      if (!res.complete) {
+        await runStage(id);
       }
     } catch (err) {
       setWarning({
@@ -47,7 +54,7 @@ function App() {
     try {
       const session = await createSession(submittedIdea);
       setSessionId(session.session_id);
-      await runStage(session.session_id, "");
+      await runStage(session.session_id);
     } catch (err) {
       setWarning({
         message: "세션을 시작하지 못했습니다. 백엔드가 실행 중인지 확인해주세요.",
@@ -57,9 +64,9 @@ function App() {
     }
   };
 
-  const handleAdvance = (message: string) => {
+  const handleRetry = () => {
     if (!sessionId) return;
-    runStage(sessionId, message);
+    runStage(sessionId);
   };
 
   if (!sessionId) {
@@ -74,7 +81,7 @@ function App() {
       loading={loading}
       results={results}
       warning={warning}
-      onAdvance={handleAdvance}
+      onRetry={handleRetry}
     />
   );
 }

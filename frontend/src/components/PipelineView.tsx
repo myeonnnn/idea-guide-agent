@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { STAGE_LABELS, type MessageResponseOk, type StageName } from "../types";
 import { buildMarkdownReport, downloadMarkdown } from "../markdown";
 import { SidebarNav } from "./SidebarNav";
@@ -12,7 +11,7 @@ interface PipelineViewProps {
   loading: boolean;
   results: MessageResponseOk[];
   warning: { message: string; rawText: string } | null;
-  onAdvance: (message: string) => void;
+  onRetry: () => void;
 }
 
 const LOADING_COPY: Record<number, string> = {
@@ -37,15 +36,8 @@ export function PipelineView({
   loading,
   results,
   warning,
-  onAdvance,
+  onRetry,
 }: PipelineViewProps) {
-  const [message, setMessage] = useState("");
-
-  const handleAdvance = () => {
-    onAdvance(message);
-    setMessage("");
-  };
-
   const handleSelectStage = (name: StageName) => {
     document.getElementById(stageAnchorId(name))?.scrollIntoView({
       behavior: "smooth",
@@ -79,41 +71,28 @@ export function PipelineView({
           ))}
         </div>
 
-        {(loading || warning) && (
+        {loading && (
           <div className="board__active">
-            {loading ? (
-              <div className="board__loading">
-                <span className="board__loading-dot" />
-                <span>{LOADING_COPY[stageIndex] ?? "분석하는 중입니다…"}</span>
-              </div>
-            ) : (
-              warning && (
-                <div className="board__warning">
-                  <p className="board__warning-title">이번 응답을 정리하지 못했습니다</p>
-                  <p className="board__warning-message">{warning.message}</p>
-                  <details className="board__warning-raw">
-                    <summary>원본 응답 보기</summary>
-                    <pre>{warning.rawText}</pre>
-                  </details>
-                </div>
-              )
-            )}
+            <div className="board__loading">
+              <span className="board__loading-dot" />
+              <span>{LOADING_COPY[stageIndex] ?? "분석하는 중입니다…"}</span>
+            </div>
           </div>
         )}
 
-        {!complete && !loading && (
-          <div className="board__next">
-            <input
-              className="board__input"
-              type="text"
-              placeholder="추가로 반영하고 싶은 내용이 있다면 입력하세요 (선택)"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAdvance()}
-            />
-            <button type="button" className="board__next-btn" onClick={handleAdvance}>
-              {warning ? "다시 시도" : "다음 단계"}
-            </button>
+        {!loading && warning && (
+          <div className="board__active">
+            <div className="board__warning">
+              <p className="board__warning-title">이번 응답을 정리하지 못했습니다</p>
+              <p className="board__warning-message">{warning.message}</p>
+              <details className="board__warning-raw">
+                <summary>원본 응답 보기</summary>
+                <pre>{warning.rawText}</pre>
+              </details>
+              <button type="button" className="board__retry-btn" onClick={onRetry}>
+                다시 시도
+              </button>
+            </div>
           </div>
         )}
 
