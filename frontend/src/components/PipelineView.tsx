@@ -22,7 +22,7 @@ const LOADING_COPY: Record<number, string> = {
   4: "가장 위험한 가정을 가려내는 중입니다…",
   5: "MVP/MLP 범위를 정의하는 중입니다…",
   6: "비즈니스모델을 구조화하는 중입니다…",
-  7: "지금까지의 결과를 종합해 판단하는 중입니다…",
+  7: "지금까지의 결과를 하나의 로드맵으로 정리하는 중입니다…",
 };
 
 function stageAnchorId(name: StageName): string {

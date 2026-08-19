@@ -1,10 +1,10 @@
 import type {
   BusinessModelOutput,
-  FinalVerdictOutput,
   HypothesisOutput,
   HypothesisValidationOutput,
   MarketResearchOutput,
   MvpMlpOutput,
+  RoadmapSummaryOutput,
   StageName,
   StageOutputMap,
   TargetSegmentOutput,
@@ -23,12 +23,6 @@ const CONFIDENCE_LABELS = {
   low: "낮음",
   medium: "중간",
   high: "높음",
-};
-
-const VERDICT_META = {
-  proceed: { label: "진행", className: "verdict-proceed" },
-  pivot: { label: "피벗 필요", className: "verdict-pivot" },
-  kill: { label: "보류", className: "verdict-kill" },
 };
 
 function TargetSegmentView({ output }: { output: TargetSegmentOutput }) {
@@ -147,14 +141,14 @@ function BusinessModelView({ output }: { output: BusinessModelOutput }) {
   );
 }
 
-function FinalVerdictView({ output }: { output: FinalVerdictOutput }) {
-  const meta = VERDICT_META[output.verdict];
+function RoadmapSummaryView({ output }: { output: RoadmapSummaryOutput }) {
   return (
     <>
-      <span className={`verdict-badge ${meta.className}`}>{meta.label}</span>
-      <p className="stage-summary">{output.reasoning}</p>
-      <Eyebrow>아직 검증되지 않은 핵심 가정</Eyebrow>
-      <BulletList items={output.key_unvalidated_assumptions} />
+      <p className="stage-summary">{output.summary}</p>
+      <Eyebrow>다음 액션</Eyebrow>
+      <BulletList items={output.key_next_actions} />
+      <Eyebrow>아직 검증되지 않은 것</Eyebrow>
+      <BulletList items={output.still_unverified} />
       <Eyebrow>근거 품질 요약</Eyebrow>
       <p className="stage-summary">{output.evidence_quality_summary}</p>
     </>
@@ -182,7 +176,7 @@ export function StageOutputView({ stageName, output }: StageOutputViewProps) {
       return <MvpMlpView output={output as MvpMlpOutput} />;
     case "business_model":
       return <BusinessModelView output={output as BusinessModelOutput} />;
-    case "final_verdict":
-      return <FinalVerdictView output={output as FinalVerdictOutput} />;
+    case "roadmap_summary":
+      return <RoadmapSummaryView output={output as RoadmapSummaryOutput} />;
   }
 }

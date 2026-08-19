@@ -14,8 +14,6 @@ const ASSUMPTION_LABELS = {
 
 const CONFIDENCE_LABELS = { low: "낮음", medium: "중간", high: "높음" };
 
-const VERDICT_LABELS = { proceed: "진행", pivot: "피벗 필요", kill: "보류" };
-
 function claimLine(claim: Claim): string {
   const tier = TIER_LABELS[claim.source_tier];
   const source = claim.source_url ? ` ([출처](${claim.source_url}))` : "";
@@ -120,15 +118,16 @@ function stageBody(result: MessageResponseOk): string {
         o.claims.map(claimLine).join("\n"),
       ].join("\n");
     }
-    case "final_verdict": {
-      const o = output as StageOutputMap["final_verdict"];
+    case "roadmap_summary": {
+      const o = output as StageOutputMap["roadmap_summary"];
       return [
-        `**판단: ${VERDICT_LABELS[o.verdict]}**`,
+        o.summary,
         "",
-        o.reasoning,
+        "**다음 액션**",
+        bulletBlock(o.key_next_actions),
         "",
-        "**아직 검증되지 않은 핵심 가정**",
-        bulletBlock(o.key_unvalidated_assumptions),
+        "**아직 검증되지 않은 것**",
+        bulletBlock(o.still_unverified),
         "",
         "**근거 품질 요약**",
         o.evidence_quality_summary,
@@ -143,7 +142,7 @@ export function buildMarkdownReport(idea: string, results: MessageResponseOk[]):
     (result, index) =>
       `## ${String(index + 1).padStart(2, "0")}. ${STAGE_LABELS[result.stage_name]}\n\n${stageBody(result)}`
   );
-  return [`# 아이디어 검증 리포트`, "", `**아이디어**: ${idea}`, `**생성일**: ${date}`, "", ...sections].join(
+  return [`# 아이디어 로드맵 초안`, "", `**아이디어**: ${idea}`, `**생성일**: ${date}`, "", ...sections].join(
     "\n\n"
   );
 }

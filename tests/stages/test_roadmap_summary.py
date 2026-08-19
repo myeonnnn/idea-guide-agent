@@ -1,11 +1,8 @@
-import pytest
-from pydantic import ValidationError
-
-from app.stages.final_verdict import FinalVerdictOutput, FinalVerdictStage
+from app.stages.roadmap_summary import RoadmapSummaryOutput, RoadmapSummaryStage
 
 
 def test_build_prompt_includes_all_prior_stages():
-    stage = FinalVerdictStage()
+    stage = RoadmapSummaryStage()
     prior = {
         "target_segment": {"primary_segment": "1인 가구"},
         "market_research": {"summary": "성장 중"},
@@ -20,24 +17,17 @@ def test_build_prompt_includes_all_prior_stages():
     assert "1인 가구" in prompt
     assert "지불 의향" in prompt
     assert "구독형" in prompt
-    assert "proceed" in prompt and "pivot" in prompt and "kill" in prompt
+    assert "verdict" not in prompt
+    assert "심사역" not in prompt
+    assert "proceed" not in prompt and "pivot" not in prompt and "kill" not in prompt
 
 
 def test_output_model_valid():
-    output = FinalVerdictOutput(
-        verdict="pivot",
-        reasoning="지불 의향 가설이 미검증 상태이고 근거 대부분이 추정치임",
-        key_unvalidated_assumptions=["월 3만원 지불 의향"],
+    output = RoadmapSummaryOutput(
+        summary="1인 가구 반려인을 위한 신뢰 기반 산책 대행 서비스 로드맵",
+        key_next_actions=["타겟 세그먼트 대상 심층 인터뷰 10~15명 진행"],
+        still_unverified=["월 3만원 지불 의향"],
         evidence_quality_summary="전체 12개 근거 중 9개가 AI 추정치",
     )
-    assert output.verdict == "pivot"
-
-
-def test_output_model_rejects_invalid_verdict():
-    with pytest.raises(ValidationError):
-        FinalVerdictOutput(
-            verdict="maybe",
-            reasoning="x",
-            key_unvalidated_assumptions=[],
-            evidence_quality_summary="x",
-        )
+    assert output.summary.startswith("1인 가구")
+    assert len(output.key_next_actions) == 1

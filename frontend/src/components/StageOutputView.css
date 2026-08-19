@@ -139,28 +139,3 @@
   line-height: 1.55;
 }
 
-.verdict-badge {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 0.4rem 1rem;
-  border-radius: 999px;
-  margin-bottom: 1.1rem;
-}
-
-.verdict-proceed {
-  background: var(--tier-primary-bg);
-  color: var(--tier-primary);
-}
-
-.verdict-pivot {
-  background: var(--tier-estimate-bg);
-  color: var(--tier-estimate);
-}
-
-.verdict-kill {
-  background: var(--warning-bg);
-  color: var(--warning);
-}

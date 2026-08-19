@@ -92,5 +92,5 @@ def test_pipeline_has_expected_stage_order():
         "hypothesis_validation",
         "mvp_mlp",
         "business_model",
-        "final_verdict",
+        "roadmap_summary",
     ]

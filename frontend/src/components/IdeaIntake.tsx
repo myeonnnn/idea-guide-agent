@@ -26,9 +26,9 @@ export function IdeaIntake({ onSubmit, disabled }: IdeaIntakeProps) {
         먼저 검증하세요.
       </h1>
       <p className="intake__subhead">
-        타겟층 설정부터 종합 판단까지 8단계 프로토콜을 한 번에 자동으로 실행해 초안을
+        타겟층 설정부터 로드맵 요약까지 8단계 프로토콜을 한 번에 자동으로 실행해 초안을
         만듭니다. 모든 주장에는 출처 등급이 붙고, 가장 위험한 가정을 가려내며, 마지막엔
-        진행/피벗/보류를 냉정하게 판단합니다.
+        전체 내용을 하나의 로드맵으로 정리합니다.
       </p>
 
       <form className="intake__form" onSubmit={handleSubmit}>

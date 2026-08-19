@@ -67,12 +67,10 @@ export interface BusinessModelOutput {
   claims: Claim[];
 }
 
-export type VerdictType = "proceed" | "pivot" | "kill";
-
-export interface FinalVerdictOutput {
-  verdict: VerdictType;
-  reasoning: string;
-  key_unvalidated_assumptions: string[];
+export interface RoadmapSummaryOutput {
+  summary: string;
+  key_next_actions: string[];
+  still_unverified: string[];
   evidence_quality_summary: string;
 }
 
@@ -84,7 +82,7 @@ export const STAGE_NAMES = [
   "hypothesis_validation",
   "mvp_mlp",
   "business_model",
-  "final_verdict",
+  "roadmap_summary",
 ] as const;
 
 export type StageName = (typeof STAGE_NAMES)[number];
@@ -97,7 +95,7 @@ export const STAGE_LABELS: Record<StageName, string> = {
   hypothesis_validation: "가설 검증",
   mvp_mlp: "MVP / MLP 정의",
   business_model: "비즈니스모델 가정",
-  final_verdict: "종합 판단",
+  roadmap_summary: "로드맵 요약",
 };
 
 export type StageOutputMap = {
@@ -108,7 +106,7 @@ export type StageOutputMap = {
   hypothesis_validation: HypothesisValidationOutput;
   mvp_mlp: MvpMlpOutput;
   business_model: BusinessModelOutput;
-  final_verdict: FinalVerdictOutput;
+  roadmap_summary: RoadmapSummaryOutput;
 };
 
 export interface CreateSessionResponse {
