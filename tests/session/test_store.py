@@ -1,3 +1,5 @@
+import shutil
+
 import pytest
 
 from app.session.store import SessionStore
@@ -38,3 +40,11 @@ def test_save_updates_updated_at(store):
     first_updated_at = session.updated_at
     store.save(session)
     assert session.updated_at >= first_updated_at
+
+
+def test_save_recreates_base_dir_if_deleted_after_construction(store):
+    shutil.rmtree(store.base_dir)
+
+    session = store.create(idea="아이디어")
+
+    assert store.load(session.id).idea == "아이디어"

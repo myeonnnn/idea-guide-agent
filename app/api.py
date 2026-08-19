@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.engine.base import EngineError
@@ -9,7 +9,21 @@ from app.engine.claude_cli import ClaudeCodeCLIEngine
 from app.orchestrator import PIPELINE, Orchestrator
 from app.session.store import SessionStore
 
+# Frontend is hosted separately (Vite dev server on localhost during
+# development); this API only ever runs on 127.0.0.1, so a fixed
+# localhost allowlist is fine rather than a wildcard origin.
+DEV_FRONTEND_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=DEV_FRONTEND_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 store = SessionStore(base_dir=Path("./data/sessions"))
 engine = ClaudeCodeCLIEngine()
 orchestrator = Orchestrator(PIPELINE)
@@ -75,7 +89,3 @@ def get_session(session_id: str):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="session not found")
     return session.model_dump(mode="json")
-
-
-FRONTEND_DIST_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
-app.mount("/", StaticFiles(directory=FRONTEND_DIST_DIR, html=True), name="frontend")

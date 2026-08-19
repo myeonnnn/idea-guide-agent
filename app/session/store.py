@@ -21,6 +21,7 @@ class SessionStore:
 
     def save(self, session: SessionState) -> None:
         session.updated_at = datetime.now(timezone.utc)
+        self.base_dir.mkdir(parents=True, exist_ok=True)
         self._path(session.id).write_text(session.model_dump_json(indent=2))
 
     def load(self, session_id: str) -> SessionState:

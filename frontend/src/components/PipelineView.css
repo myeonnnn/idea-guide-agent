@@ -1,64 +1,71 @@
-.pipeline {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
-}
-
-.pipeline__idea {
-  font-size: 13.5px;
-  color: var(--ink-muted);
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.pipeline__stepper-row {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--bg);
-  padding: 0.75rem 0 1.25rem;
-  margin: -0.75rem 0 0.75rem;
-}
-
-.pipeline__timeline {
+.board {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  align-items: flex-start;
+  min-height: 100vh;
 }
 
-.pipeline__card {
+.board__main {
+  flex: 1;
+  min-width: 0;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 2.5rem 3rem 4rem;
+}
+
+.board__grid {
+  columns: 2;
+  column-gap: 1.5rem;
+}
+
+@media (min-width: 1680px) {
+  .board__grid {
+    columns: 3;
+  }
+}
+
+.board__card {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  padding: 2rem;
-  scroll-margin-top: 5.5rem;
+  padding: 1.75rem;
+  scroll-margin-top: 1.5rem;
 }
 
-.pipeline__card-eyebrow {
+.board__card-eyebrow {
   margin-bottom: 1.1rem;
 }
 
-.pipeline__loading {
+.board__active {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.board__loading {
   display: flex;
   align-items: center;
   gap: 0.7rem;
   color: var(--ink-muted);
   font-size: 14px;
-  padding: 3rem 0;
+  padding: 1.5rem 0;
   justify-content: center;
 }
 
-.pipeline__loading-dot {
+.board__loading-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--primary);
-  animation: pipeline-pulse 1.1s ease-in-out infinite;
+  animation: board-pulse 1.1s ease-in-out infinite;
 }
 
-@keyframes pipeline-pulse {
+@keyframes board-pulse {
   0%,
   100% {
     opacity: 0.3;
@@ -70,38 +77,38 @@
   }
 }
 
-.pipeline__warning {
+.board__warning {
   background: var(--warning-bg);
   border: 1px solid var(--warning-border);
   border-radius: var(--radius-md);
   padding: 1.1rem 1.25rem;
 }
 
-.pipeline__warning-title {
+.board__warning-title {
   font-weight: 600;
   color: var(--warning);
   margin-bottom: 0.4rem;
 }
 
-.pipeline__warning-message {
+.board__warning-message {
   font-size: 13.5px;
   color: var(--ink-muted);
 }
 
-.pipeline__warning-raw {
+.board__warning-raw {
   margin-top: 0.75rem;
 }
 
-.pipeline__warning-raw summary {
+.board__warning-raw summary {
   font-size: 12.5px;
   color: var(--ink-faint);
   cursor: pointer;
 }
 
-.pipeline__warning-raw pre {
+.board__warning-raw pre {
   margin-top: 0.5rem;
   padding: 0.75rem;
-  background: var(--surface);
+  background: var(--surface-sunken);
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 12px;
@@ -111,13 +118,12 @@
   overflow-y: auto;
 }
 
-.pipeline__next {
+.board__next {
   display: flex;
   gap: 0.75rem;
-  margin-top: 1.5rem;
 }
 
-.pipeline__input {
+.board__input {
   flex: 1;
   padding: 0.7rem 0.9rem;
   border: 1px solid var(--border-strong);
@@ -127,15 +133,15 @@
   color: var(--ink);
 }
 
-.pipeline__input::placeholder {
+.board__input::placeholder {
   color: var(--ink-faint);
 }
 
-.pipeline__input:focus-visible {
+.board__input:focus-visible {
   border-color: var(--primary);
 }
 
-.pipeline__next-btn {
+.board__next-btn {
   padding: 0.7rem 1.4rem;
   background: var(--primary);
   color: white;
@@ -147,12 +153,11 @@
   transition: background 0.15s ease;
 }
 
-.pipeline__next-btn:hover {
+.board__next-btn:hover {
   background: var(--primary-strong);
 }
 
-.pipeline__complete {
-  margin-top: 1.5rem;
+.board__complete {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,9 +165,10 @@
   text-align: center;
   font-size: 13.5px;
   color: var(--ink-muted);
+  padding: 1rem 0;
 }
 
-.pipeline__download-btn {
+.board__download-btn {
   padding: 0.7rem 1.4rem;
   background: var(--primary);
   color: white;
@@ -173,6 +179,6 @@
   transition: background 0.15s ease;
 }
 
-.pipeline__download-btn:hover {
+.board__download-btn:hover {
   background: var(--primary-strong);
 }

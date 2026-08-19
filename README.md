@@ -22,8 +22,9 @@
 ## 아키텍처 요약
 
 - 로컬 전용(127.0.0.1), 외부 API 키 없이 로컬 `claude` CLI(Claude Code)를 추론 엔진으로 사용
+- 백엔드(API 서버)와 프론트엔드(웹뷰)는 완전히 분리된 별개 프로세스로 호스팅되고, CORS를 통해 서로 통신한다 — 한쪽이 다른 쪽을 서빙하지 않는다
 - 백엔드: Python/FastAPI. 파이프라인 오케스트레이션과 자가검증 로직은 코드로 구현(스킬/프롬프트 지시문에만 의존하지 않음)
-- 프론트엔드: Vite + React + TypeScript (`frontend/`). 개발 시 Vite dev server가 `/session*` 요청을 FastAPI로 프록시하고, 배포 시에는 `npm run build` 결과물(`frontend/dist`)을 FastAPI가 정적 파일로 서빙한다
+- 프론트엔드: Vite + React + TypeScript (`frontend/`), 개발 시 `localhost:5173`에서 독립적으로 뜬다. API 서버 주소는 `VITE_API_BASE_URL` 환경변수로 지정 가능(기본값 `http://127.0.0.1:8000`)
 - 추론 엔진은 `Engine` 인터페이스로 추상화되어 있어, 나중에 Anthropic/OpenAI API로 교체해도 파이프라인 코드는 변경하지 않는다
 
 ## 문서
@@ -34,19 +35,23 @@
 
 ## 로컬 실행
 
+백엔드와 프론트엔드를 각각 별도 터미널에서 띄운다.
+
 ```bash
-# 백엔드
+# 백엔드 (http://127.0.0.1:8000)
 python3.11 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-
-# 프론트엔드 빌드 (최초 1회, 또는 프론트엔드 수정 후)
-cd frontend && npm install && npm run build && cd ..
-
-# 서버 실행 (http://127.0.0.1:8000)
 .venv/bin/uvicorn app.api:app --host 127.0.0.1 --port 8000
 ```
 
-프론트엔드를 개발 중일 때는 `cd frontend && npm run dev`로 별도 실행하면 (포트 5173) `/session*` 요청이 자동으로 8000번 백엔드로 프록시된다.
+```bash
+# 프론트엔드 (http://localhost:5173)
+cd frontend
+npm install
+npm run dev
+```
+
+브라우저에서 `http://localhost:5173`으로 접속한다 (8000번이 아니라 5173번).
 
 ## 현재 상태
 

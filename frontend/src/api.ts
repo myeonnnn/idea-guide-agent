@@ -1,13 +1,15 @@
 import type { CreateSessionResponse, MessageResponse } from "./types";
 
-async function postJson<T>(url: string, body: unknown): Promise<T> {
-  const res = await fetch(url, {
+const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
+
+async function postJson<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    throw new Error(`요청 실패 (${res.status}): ${url}`);
+    throw new Error(`요청 실패 (${res.status}): ${path}`);
   }
   return res.json();
 }
